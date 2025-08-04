@@ -1,0 +1,38 @@
+# OS & Editor files
+client/.DS_Store
+client/.idea/
+client/.vscode/
+client/*.suo
+client/*.ntvs*
+client/*.njsproj
+client/*.sln
+client/*.sw?
+
+# Logs
+client/logs
+client/*.log
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/pnpm-debug.log*
+client/lerna-debug.log*
+
+# Environment files
+client/.env
+client/*.local
+
+# Node modules
+client/node_modules
+server/node_modules/
+
+# Build output
+client/dist/
+client/dist-ssr/
+server/bin/
+server/obj/
+
+# Client specific
+client/logs/
+
+# Allow specific VSCode settings to be tracked
+!.vscode/extensions.json
