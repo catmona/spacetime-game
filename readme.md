@@ -23,7 +23,7 @@ bun install
 #### Start the development server
 
 ```sh
-bun run dev
+bun dev
 ```
 
 ### Server Setup (Spacetime CLI)
