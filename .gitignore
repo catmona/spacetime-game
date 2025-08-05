@@ -30,6 +30,12 @@ client/dist/
 client/dist-ssr/
 server/bin/
 server/obj/
+server/control-db/
+server/logs/
+server/program-bytes/
+server/replicas/
+server/spacetime.pid
+server/metadata.toml
 
 # Client specific
 client/logs/
