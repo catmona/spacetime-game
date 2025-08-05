@@ -14,17 +14,22 @@ for (const [table, { key }] of Object.entries(tableConfigs)) {
     const hookName = `use${pascal}`
     const fileContent = `
 // Auto-generated hook for ${table}
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { useEffect, useState } from 'react'
 import { ${pascal} } from 'src/module_bindings'
 
 export function ${hookName}() {
-  const [${table}, set${pascal}] = useState([])
+  const [${table}s, set${pascal}] = useState([])
 
   useEffect(() => {
-    const sub = ${table}.subscribeAll({
-      onInsert: (_ctx, row) => setItems(prev => [...prev, row]),
+    const sub = ${table}s.subscribeAll({
+      onInsert: (_ctx, row) => set${pascal}(prev => [...prev, row]),
       onUpdate: (_ctx, row) =>
-        setItems(prev => {
+        set${pascal}(prev => {
           const index = prev.findIndex(i => i.${key} === row.${key})
           if (index === -1) return [...prev, row]
           const updated = [...prev]
@@ -32,13 +37,13 @@ export function ${hookName}() {
           return updated
         }),
       onDelete: (_ctx, row) =>
-        setItems(prev => prev.filter(i => i.${key} !== row.${key})),
+        set${pascal}(prev => prev.filter(i => i.${key} !== row.${key})),
     })
 
     return () => sub.unsubscribe()
   }, [])
 
-  return items
+  return ${table}s
 }
 `.trimStart()
 
