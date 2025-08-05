@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using SpacetimeDB;
 
 public static partial class Module
@@ -46,23 +47,32 @@ public static partial class Module
 
         return name;
     }
-    
-    static Random random = new Random();
-    public static string GetRandomHexNumber(int digits)
+
+    public static string GetRandomHexNumber(int digits, Identity? sender = null, Timestamp? timestamp = null)
     {
-        byte[] buffer = new byte[digits / 2];
-        random.NextBytes(buffer);
-        string result = String.Concat(buffer.Select(x => x.ToString("X2")).ToArray());
-        if (digits % 2 == 0)
-            return result;
-        return result + random.Next(16).ToString("X");
+        string senderHex = sender?.ToString() ?? "";
+        string timestampHex = timestamp.GetValueOrDefault().MicrosecondsSinceUnixEpoch.ToString("X");
+        
+        string combined = timestampHex + senderHex;
+
+        if (combined.Length < digits)
+        {
+            combined = combined.PadRight(digits, '0');
+        }
+        else if (combined.Length > digits)
+        {
+            combined = combined.Substring(0, digits);
+        }
+
+        Log.Info($"Generated random hex number: {combined} (from sender: {senderHex}, timestamp: {timestampHex})");
+        return combined;
     }
 
     [Reducer]
     public static void SendMessage(ReducerContext ctx, string text)
     {
         text = ValidateMessage(text);
-        Identity id = Identity.FromHexString(GetRandomHexNumber(64));
+        Identity id = Identity.FromHexString(GetRandomHexNumber(64, ctx.Sender, ctx.Timestamp));
         Log.Info($"({id}). {ctx.Sender.ToString()}: {text}");
         ctx.Db.message.Insert(new Message
         {
