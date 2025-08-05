@@ -4,10 +4,11 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "server-start": "spacetime start --data-dir ../server",
+        "server-start": "cd ../server && spacetime start",
         "server-publish": "spacetime publish --project-path ../server chat-server",
         "generate-bindings": "spacetime generate --lang typescript --out-dir src/module_bindings --project-path ../server",
         "generate-hooks": "bun generate-hooks.js",
+        "clear-db": "cd ../server && spacetime delete chat-server && cd ../client",
         "dev": "bunx --bun vite",
         "build": "bunx --bun vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

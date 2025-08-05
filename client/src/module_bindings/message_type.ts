@@ -33,6 +33,7 @@ import {
   type SubscriptionEventContextInterface,
 } from "@clockworklabs/spacetimedb-sdk";
 export type Message = {
+  id: Identity,
   sender: Identity,
   sent: Timestamp,
   text: string,
@@ -48,6 +49,7 @@ export namespace Message {
   */
   export function getTypeScriptAlgebraicType(): AlgebraicType {
     return AlgebraicType.createProductType([
+      new ProductTypeElement("id", AlgebraicType.createIdentityType()),
       new ProductTypeElement("sender", AlgebraicType.createIdentityType()),
       new ProductTypeElement("sent", AlgebraicType.createTimestampType()),
       new ProductTypeElement("text", AlgebraicType.createStringType()),

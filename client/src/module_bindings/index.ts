@@ -60,6 +60,11 @@ const REMOTE_MODULE = {
     message: {
       tableName: "message",
       rowType: Message.getTypeScriptAlgebraicType(),
+      primaryKey: "id",
+      primaryKeyInfo: {
+        colName: "id",
+        colType: Message.getTypeScriptAlgebraicType().product.elements[0].algebraicType,
+      },
     },
     user: {
       tableName: "user",

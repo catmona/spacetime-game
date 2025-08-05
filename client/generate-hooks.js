@@ -11,7 +11,9 @@ if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true })
 
 for (const [table, { key }] of Object.entries(tableConfigs)) {
     const pascal = table[0].toUpperCase() + table.slice(1)
-    const hookName = `use${pascal}`
+    const set = `set${pascal}s`
+    const plural = `${table}s`
+    const hookName = `use${pascal}s`
     const fileContent = `
 // Auto-generated hook for ${table}
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -20,30 +22,46 @@ for (const [table, { key }] of Object.entries(tableConfigs)) {
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { useEffect, useState } from 'react'
-import { ${pascal} } from 'src/module_bindings'
+import { DbConnection, EventContext, ${pascal} } from '../module_bindings';
 
-export function ${hookName}() {
-  const [${table}s, set${pascal}] = useState([])
+export function ${hookName}(conn: DbConnection | null): Map<string, ${pascal}> {
+  const [${plural}, ${set}] = useState<Map<string, ${pascal}>>(new Map());
 
   useEffect(() => {
-    const sub = ${table}s.subscribeAll({
-      onInsert: (_ctx, row) => set${pascal}(prev => [...prev, row]),
-      onUpdate: (_ctx, row) =>
-        set${pascal}(prev => {
-          const index = prev.findIndex(i => i.${key} === row.${key})
-          if (index === -1) return [...prev, row]
-          const updated = [...prev]
-          updated[index] = row
-          return updated
-        }),
-      onDelete: (_ctx, row) =>
-        set${pascal}(prev => prev.filter(i => i.${key} !== row.${key})),
-    })
+    if (!conn) return;
+    
+    // onInsert
+    const onInsert = (_ctx: EventContext, ${table}: ${pascal}) => {
+      ${set}(prev => new Map(prev.set(${table}.${key}.toHexString(), ${table})));
+    };
+    conn.db.${table}.onInsert(onInsert);
 
-    return () => sub.unsubscribe()
-  }, [])
+    // onDelete
+    const onDelete = (_ctx: EventContext, ${table}: ${pascal}) => {
+      ${set}(prev => {
+        prev.delete(${table}.${key}.toHexString());
+        return new Map(prev);
+      });
+    };
+    conn.db.message.onDelete(onDelete);
 
-  return ${table}s
+    // onUpdate
+    const onUpdate = (_ctx: EventContext, old${pascal}: ${pascal}, new${pascal}: ${pascal}) => {
+      ${set}(prev => {
+        prev.delete(old${pascal}.${key}.toHexString());
+        return new Map(prev.set(new${pascal}.identity.toHexString(), new${pascal}));
+      });
+    };
+    conn.db.${table}.onUpdate(onUpdate);
+    
+    return () => {
+      conn.db.${table}.removeOnInsert(onInsert);
+      conn.db.${table}.removeOnDelete(onDelete);
+      conn.db.${table}.removeOnUpdate(onUpdate);
+    };
+  }, [conn]);
+  
+  return ${plural};
 }
 `.trimStart()
 

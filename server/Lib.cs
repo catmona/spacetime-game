@@ -16,6 +16,8 @@ public static partial class Module
     [Table(Name = "message", Public = true)]
     public partial class Message
     {
+        [PrimaryKey]
+        public Identity Id;
         public Identity Sender;
         public Timestamp Sent;
         public string Text = "";
