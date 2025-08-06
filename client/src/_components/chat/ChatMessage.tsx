@@ -9,7 +9,10 @@ export default function ChatMessage({
 }) {
     return (
         <>
-            <div key={key} className="flex flex-row justify-start gap-1">
+            <div
+                key={key}
+                className="flex flex-row justify-start gap-1 text-white"
+            >
                 <p>
                     <b>{message.senderName}: </b>
                 </p>

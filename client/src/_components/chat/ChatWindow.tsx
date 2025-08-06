@@ -34,7 +34,7 @@ export default function ChatWindow({
         'unknown'
 
     return (
-        <div className="absolute bottom-0 left-0 w-[35%] h-1/2 max-h-1/2 bg-black bg-opacity-50 rounded-tr flex gap-1 justify-center flex-col p-1 overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-[35%] h-1/2 max-h-1/2 bg-white bg-opacity-5 rounded-tr flex gap-1 justify-center flex-col p-1 overflow-hidden">
             <ChatPanel messages={messages} users={users} />
             <ChatInput
                 onMessageSubmit={onMessageSubmit}

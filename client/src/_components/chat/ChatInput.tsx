@@ -9,11 +9,11 @@ export default function ChatInput({
 }) {
     return (
         <>
-            <div className="w-full h-8 bg-blue-200 px-1">
+            <div className="w-full h-8 px-1">
                 <form onSubmit={onMessageSubmit} className="w-full h-full flex">
                     <input
                         type="text"
-                        className="w-full outline-none"
+                        className="w-full outline-none bg-transparent text-white"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                     ></input>

@@ -100,7 +100,7 @@ function App() {
     }
 
     return (
-        <div className="App">
+        <div className="App bg-black h-svh w-svh">
             <div className="profile">
                 <h1>Profile</h1>
                 {!settingName ? (
