@@ -71,7 +71,7 @@ function App() {
 
     return (
         <div className="App bg-black h-svh w-svh">
-            <ChatWindow conn={conn} identity={identity} />
+            <ChatWindow conn={conn} />
         </div>
     )
 }

@@ -2,6 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { Message, User } from '../../module_bindings'
 import ChatMessage from './ChatMessage'
 import { PrettyMessage } from './ChatWindow'
+import { ComponentType } from 'react'
+import {
+    FixedSizeList as _FixedSizeList,
+    FixedSizeListProps,
+} from 'react-window'
+
+const FixedSizeList =
+    _FixedSizeList as unknown as ComponentType<FixedSizeListProps>
 
 export default function ChatPanel({
     messages,
@@ -48,17 +56,34 @@ export default function ChatPanel({
         }
     }, [prettyMessages])
 
+    const Row = ({
+        index,
+        style,
+    }: {
+        index: number
+        style: React.CSSProperties
+    }) => (
+        <div style={style}>
+            <ChatMessage message={prettyMessages[index]} key={index} />
+        </div>
+    )
+
     return (
         <>
-            <div className="w-full h-full overflow-y-auto pl-1" ref={scrollRef}>
+            <div className="w-full h-full pl-1">
                 {prettyMessages.length < 1 && (
                     <p className="text-white">No messages</p>
                 )}
-                <div>
-                    {prettyMessages.map((message, key) => (
-                        <ChatMessage message={message} key={key} />
-                    ))}
-                </div>
+                <FixedSizeList
+                    outerRef={scrollRef}
+                    className="w-full h-full overflow-y-auto"
+                    itemCount={prettyMessages.length}
+                    itemSize={24}
+                    height={400}
+                    width={400}
+                >
+                    {Row}
+                </FixedSizeList>
                 {hasScrolledUp && prettyMessages.length > oldNumMessages ? (
                     <div className="absolute w-full bottom-8 text-right">
                         <b className="text-red-200 pr-3 text-xl">↓</b>
