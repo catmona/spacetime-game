@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './index.css'
 import { DbConnection, type ErrorContext } from './module_bindings'
 import { Identity } from '@clockworklabs/spacetimedb-sdk'
 import ChatWindow from './_components/chat/ChatWindow'
 
 function App() {
-    const [newName, setNewName] = useState('')
-    const [settingName, setSettingName] = useState(false)
     const [systemMessage, setSystemMessage] = useState('')
 
     const [connected, setConnected] = useState<boolean>(false)
@@ -88,44 +86,13 @@ function App() {
     if (!conn || !connected || !identity) {
         return (
             <div className="App">
-                <h1>Connecting...</h1>
+                <h1 className="text-white">Connecting...</h1>
             </div>
         )
     }
 
-    const onSubmitNewName = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setSettingName(false)
-        conn.reducers.setName(newName)
-    }
-
     return (
         <div className="App bg-black h-svh w-svh">
-            <div className="profile">
-                <h1>Profile</h1>
-                {!settingName ? (
-                    <>
-                        <p>{name}</p>
-                        <button
-                            onClick={() => {
-                                setSettingName(true)
-                                setNewName(name)
-                            }}
-                        >
-                            Edit Name
-                        </button>
-                    </>
-                ) : (
-                    <form onSubmit={onSubmitNewName}>
-                        <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                        />
-                        <button type="submit">Submit</button>
-                    </form>
-                )}
-            </div>
             <div className="system" style={{ whiteSpace: 'pre-wrap' }}>
                 <h1>System</h1>
                 <div>

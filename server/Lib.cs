@@ -74,6 +74,11 @@ public static partial class Module
         text = ValidateMessage(text);
         Identity id = Identity.FromHexString(GetRandomHexNumber(64, ctx.Sender, ctx.Timestamp));
         Log.Info($"({id}). {ctx.Sender.ToString()}: {text}");
+        if(text.StartsWith("/nick "))
+        {
+            SetName(ctx, text.Substring(6).Trim());
+            return;
+        }
         ctx.Db.message.Insert(new Message
         {
             Sender = ctx.Sender,

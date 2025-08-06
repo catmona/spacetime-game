@@ -20,7 +20,9 @@ export default function ChatPanel({
     return (
         <>
             <div className="w-full h-full overflow-y-auto pl-1">
-                {prettyMessages.length < 1 && <p>No messages</p>}
+                {prettyMessages.length < 1 && (
+                    <p className="text-white">No messages</p>
+                )}
                 <div>
                     {prettyMessages.map((message, key) => (
                         <ChatMessage message={message} key={key} />
