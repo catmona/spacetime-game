@@ -57,11 +57,10 @@ in a separate terminal:
 spacetime publish server-chat
 ```
 
-### Update bindings
+### start server & client
 
-from root dir
+from client dir
 
 ```sh
-mkdir -p client/src/module_bindings
-spacetime generate --lang typescript --out-dir client/src/module_bindings --project-path server
+bun dev-all
 ```
