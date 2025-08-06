@@ -33,6 +33,8 @@ import {
   type SubscriptionEventContextInterface,
 } from "@clockworklabs/spacetimedb-sdk";
 import { Message } from "./message_type";
+import { MsgChannel as __MsgChannel } from "./msg_channel_type";
+
 import { type EventContext, type Reducer, RemoteReducers, RemoteTables } from ".";
 
 /**

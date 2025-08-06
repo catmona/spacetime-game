@@ -52,6 +52,8 @@ export { UserTableHandle };
 // Import and reexport all types
 import { Message } from "./message_type.ts";
 export { Message };
+import { MsgChannel } from "./msg_channel_type.ts";
+export { MsgChannel };
 import { User } from "./user_type.ts";
 export { User };
 
@@ -148,19 +150,19 @@ export class RemoteReducers {
     this.connection.offReducer("ClientDisconnected", callback);
   }
 
-  sendMessage(text: string) {
-    const __args = { text };
+  sendMessage(text: string, channel: MsgChannel) {
+    const __args = { text, channel };
     let __writer = new BinaryWriter(1024);
     SendMessage.getTypeScriptAlgebraicType().serialize(__writer, __args);
     let __argsBuffer = __writer.getBuffer();
     this.connection.callReducer("SendMessage", __argsBuffer, this.setCallReducerFlags.sendMessageFlags);
   }
 
-  onSendMessage(callback: (ctx: ReducerEventContext, text: string) => void) {
+  onSendMessage(callback: (ctx: ReducerEventContext, text: string, channel: MsgChannel) => void) {
     this.connection.onReducer("SendMessage", callback);
   }
 
-  removeOnSendMessage(callback: (ctx: ReducerEventContext, text: string) => void) {
+  removeOnSendMessage(callback: (ctx: ReducerEventContext, text: string, channel: MsgChannel) => void) {
     this.connection.offReducer("SendMessage", callback);
   }
 

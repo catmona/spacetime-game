@@ -14,6 +14,13 @@ public static partial class Module
         public bool Online;
     }
 
+    [SpacetimeDB.Type]
+    public enum MsgChannel
+    {
+        Global,
+        System,
+    }
+
     [Table(Name = "message", Public = true)]
     public partial class Message
     {
@@ -22,6 +29,7 @@ public static partial class Module
         public Identity Sender;
         public Timestamp Sent;
         public string Text = "";
+        public MsgChannel Channel = MsgChannel.Global;
     }
 
 
@@ -69,12 +77,13 @@ public static partial class Module
     }
 
     [Reducer]
-    public static void SendMessage(ReducerContext ctx, string text)
+    public static void SendMessage(ReducerContext ctx, string text, MsgChannel channel = MsgChannel.Global)
     {
         text = ValidateMessage(text);
         Identity id = Identity.FromHexString(GetRandomHexNumber(64, ctx.Sender, ctx.Timestamp));
         Log.Info($"({id}). {ctx.Sender.ToString()}: {text}");
-        if(text.StartsWith("/nick "))
+        
+        if (text.StartsWith("/nick "))
         {
             SetName(ctx, text.Substring(6).Trim());
             return;
@@ -84,7 +93,8 @@ public static partial class Module
             Sender = ctx.Sender,
             Text = text,
             Sent = ctx.Timestamp,
-            Id = id
+            Id = id,
+            Channel = channel
         });
     }
 
@@ -104,14 +114,22 @@ public static partial class Module
     }
 
     [Reducer(ReducerKind.ClientConnected)]
-    public static void ClientConnected(ReducerContext ctx) {
-        Log.Info($"Connect {ctx.Sender}");
+    public static void ClientConnected(ReducerContext ctx)
+    {
+        Log.Info($"Connection Request {ctx.Sender}");
         var user = ctx.Db.user.Identity.Find(ctx.Sender);
+        
+        if(user != null && user.Online)
+        {
+            Log.Warn($"Client {ctx.Sender} is already online.");
+            return;
+        }
 
         if (user is not null)
         {
             user.Online = true;
             ctx.Db.user.Identity.Update(user);
+            SendMessage(ctx, $"{user?.Name ?? user?.Identity.ToString().Substring(0, 8).ToLower()} connected", MsgChannel.System);
         }
         else
         {
@@ -121,13 +139,21 @@ public static partial class Module
                 Identity = ctx.Sender,
                 Online = true
             });
+            SendMessage(ctx, $"{user?.Name ?? user?.Identity.ToString().Substring(0, 8).ToLower()} connected (new user)", MsgChannel.System);
         }
+        
+        
     }
 
     [Reducer(ReducerKind.ClientDisconnected)]
     public static void ClientDisconnected(ReducerContext ctx)
     {
         var user = ctx.Db.user.Identity.Find(ctx.Sender);
+        if(user != null && !user.Online)
+        {
+            Log.Warn($"Client {ctx.Sender} is already offline.");
+            return;
+        }
 
         if (user is not null)
         {
@@ -138,5 +164,7 @@ public static partial class Module
         {
             Log.Warn($"Client {ctx.Sender} disconnected but was not found in the database.");
         }
+        
+        SendMessage(ctx, $"{user?.Name ?? user?.Identity.ToString().Substring(0, 8).ToLower()} disconnected", MsgChannel.System);
     }
 }

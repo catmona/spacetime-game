@@ -1,3 +1,4 @@
+import { MsgChannel } from '../../module_bindings'
 import { PrettyMessage } from './ChatWindow'
 
 export default function ChatMessage({
@@ -14,7 +15,11 @@ export default function ChatMessage({
                 className="flex flex-row justify-start gap-1 text-white"
             >
                 <p>
-                    <b>{message.senderName}: </b>
+                    {message.channel.tag == 'System' ? (
+                        <b className="text-red-500">System: </b>
+                    ) : (
+                        <b>{message.senderName}: </b>
+                    )}
                 </p>
                 <p>{message.text}</p>
             </div>

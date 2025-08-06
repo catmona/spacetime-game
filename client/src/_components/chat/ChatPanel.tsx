@@ -16,7 +16,9 @@ export default function ChatPanel({
                 users.get(message.sender.toHexString())?.name ||
                 message.sender.toHexString().substring(0, 8),
             text: message.text,
+            channel: message.channel,
         }))
+
     return (
         <>
             <div className="w-full h-full overflow-y-auto pl-1">

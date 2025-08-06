@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import ChatInput from './ChatInput'
 import ChatPanel from './ChatPanel'
-import { DbConnection } from '../../module_bindings'
 import { useMessages } from '../../hooks/useMessages'
 import { useUsers } from '../../hooks/useUsers'
 import { Identity } from '@clockworklabs/spacetimedb-sdk'
+import { DbConnection } from '../../module_bindings'
+import MsgChannel from '../../module_bindings/msg_channel_type'
 
 export type PrettyMessage = {
     senderName: string
     text: string
+    channel: MsgChannel
 }
 
 export default function ChatWindow({
@@ -25,7 +27,9 @@ export default function ChatWindow({
     const onMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setNewMessage('')
-        conn.reducers.sendMessage(newMessage)
+
+        // tag-based enum for some unholy reason
+        conn.reducers.sendMessage(newMessage, { tag: 'Global' })
     }
 
     const name =

@@ -32,11 +32,14 @@ import {
   type ReducerEventContextInterface,
   type SubscriptionEventContextInterface,
 } from "@clockworklabs/spacetimedb-sdk";
+import { MsgChannel as __MsgChannel } from "./msg_channel_type";
+
 export type Message = {
   id: Identity,
   sender: Identity,
   sent: Timestamp,
   text: string,
+  channel: __MsgChannel,
 };
 
 /**
@@ -53,6 +56,7 @@ export namespace Message {
       new ProductTypeElement("sender", AlgebraicType.createIdentityType()),
       new ProductTypeElement("sent", AlgebraicType.createTimestampType()),
       new ProductTypeElement("text", AlgebraicType.createStringType()),
+      new ProductTypeElement("channel", __MsgChannel.getTypeScriptAlgebraicType()),
     ]);
   }
 
