@@ -41,7 +41,9 @@ export default function ChatPanel({
             setHasScrolledUp(scrollHeight - scrollTop - clientHeight > 20)
         }
 
+        // Scroll to the bottom when the component mounts
         const currentRef = scrollRef.current
+        if (currentRef) currentRef.scrollTop = currentRef?.scrollHeight
         currentRef?.addEventListener('scroll', handleScroll)
 
         return () => {
