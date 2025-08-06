@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "server-start": "cd ../server && spacetime start",
+        "server-start": "cd ../server && spacetime start --data-dir data",
         "server-publish": "spacetime publish --project-path ../server chat-server",
         "generate-bindings": "spacetime generate --lang typescript --out-dir src/module_bindings --project-path ../server",
         "generate-hooks": "bun generate-hooks.js",
